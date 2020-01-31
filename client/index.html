@@ -1,0 +1,22 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<script type="text/javascript" src="proto.js"></script>
+		<script type="text/javascript" src="kernel.js"></script>
+		<script type="text/javascript" src="actor.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="example.js"></script>
+		<script>
+			var k = Kernel();
+			const root = k.spawn((rt, self, mail) => {
+				const Fact = AFactorial(rt);
+				const Logger = rt.spawn(logger);
+				Fact.start();
+				Fact.compute(Logger, 5);
+			});
+			k.send(root, newMail(Protocol.Generic, null));
+			while (k.step());
+		</script>
+	</body>
+</html>

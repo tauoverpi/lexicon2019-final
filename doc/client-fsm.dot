@@ -1,0 +1,78 @@
+digraph game {
+    label="network";
+
+    subgraph cluster_client {
+        label="client";
+
+        subgraph cluster_client_gui {
+            label="gui";
+            client_gui_send[label = "send"];
+        }
+
+        subgraph cluster_client_proxy_server {
+            label="server proxy";
+            client_proxy_server_store[label = "store"];
+            client_proxy_server_session[label = "session"];
+        }
+        client_gui_send -> client_proxy_server_session;
+    }
+
+    subgraph cluster_sever {
+        label="server";
+
+        subgraph cluster_server_proxy_client {
+            label="client proxy";
+            server_proxy_client_store[label = "store proxy"];
+            server_proxy_client_session[label = "proxy"];
+        }
+
+        subgraph cluster_server_store {
+            label="store";
+
+        }
+
+        subgraph cluster_server_sql {
+            label="SQL";
+            server_sql[shape=none, label=""];
+        }
+
+        server_gamemanager[label = "game manager"];
+        server_logger[label = "log"];
+        server_gamemanager -> server_proxy_client_session, server_logger, server_sql;
+        server_sql -> server_gamemanager;
+        server_proxy_client_session -> server_gamemanager;
+    }
+
+    subgraph cluster_spectator {
+        label="spectator";
+
+        subgraph cluster_spectator_proxy_server {
+            label="server proxy";
+            spectator_proxy_server_store[label = "store"];
+            spectator_proxy_server_session[label = "session"];
+        }
+    }
+
+    subgraph cluster_npc {
+        label="npc client";
+
+        subgraph cluster_npc_proxy_server {
+            label="server proxy";
+            npc_proxy_server_store[label = "server store"];
+            npc_proxy_server_session[label = "server session"];
+        }
+
+        npc_mind[label = "mind"];
+        npc_mind -> npc_proxy_server_store, npc_proxy_server_session;
+        npc_proxy_server_store -> npc_mind;
+        npc_proxy_server_session -> npc_mind;
+    }
+
+
+    client_proxy_server_store -> server_proxy_client_store[dir=none];
+    client_proxy_server_session -> server_proxy_client_session[dir=none];
+    npc_proxy_server_store -> server_proxy_client_store[dir=none];
+    npc_proxy_server_session -> server_proxy_client_session[dir=none];
+    spectator_proxy_server_store -> server_logger[dir=none];
+    spectator_proxy_server_session -> server_logger[dir=none];
+}
